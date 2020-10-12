@@ -92,19 +92,19 @@ abstract class LocalScanner(name: String, config: ScannerConfiguration) : Scanne
         val scannerExe = command()
 
         getPathFromEnvironment(scannerExe)?.parentFile?.takeIf {
-            getVersion(it) == scannerVersion
+            getVersion(it) == expectedVersion
         } ?: run {
             if (scannerExe.isNotEmpty()) {
                 log.info {
-                    "Bootstrapping scanner '$scannerName' as required version $scannerVersion was not found in PATH."
+                    "Bootstrapping scanner '$scannerName' as expected version $expectedVersion was not found in PATH."
                 }
 
                 bootstrap().also {
                     val actualScannerVersion = getVersion(it)
-                    if (actualScannerVersion != scannerVersion) {
+                    if (actualScannerVersion != expectedVersion) {
                         throw IOException(
                             "Bootstrapped scanner version $actualScannerVersion " +
-                                    "does not match expected version $scannerVersion."
+                                    "does not match expected version $expectedVersion."
                         )
                     }
                 }
@@ -117,9 +117,9 @@ abstract class LocalScanner(name: String, config: ScannerConfiguration) : Scanne
     }
 
     /**
-     * The required version of the scanner. This is also the version that would get bootstrapped.
+     * The expected version of the scanner. This is also the version that would get bootstrapped.
      */
-    protected abstract val scannerVersion: String
+    protected abstract val expectedVersion: String
 
     /**
      * The full path to the scanner executable.
@@ -131,7 +131,7 @@ abstract class LocalScanner(name: String, config: ScannerConfiguration) : Scanne
      */
     open val version by lazy { getVersion(scannerDir) }
 
-    override fun getVersionRequirement(): Requirement = Requirement.buildLoose(scannerVersion)
+    override fun getVersionRequirement(): Requirement = Requirement.buildLoose(expectedVersion)
 
     /**
      * Bootstrap the scanner to be ready for use, like downloading and / or configuring it.
