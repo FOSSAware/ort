@@ -19,6 +19,8 @@
 
 package org.ossreviewtoolkit.model
 
+import com.fasterxml.jackson.module.kotlin.readValue
+
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.containExactly
@@ -32,11 +34,14 @@ import java.io.File
 import java.lang.IllegalArgumentException
 
 import org.ossreviewtoolkit.model.config.AnalyzerConfiguration
+import org.ossreviewtoolkit.utils.test.patchExpectedResult
 
 private fun readOrtResult(relativeOrtResultFilePath: String): OrtResult =
-    File("../analyzer/src/funTest/assets/projects")
-        .resolve(relativeOrtResultFilePath)
-        .readValue()
+    yamlMapper.readValue(
+        patchExpectedResult(
+            File("../analyzer/src/funTest/assets/projects").resolve(relativeOrtResultFilePath)
+        )
+    )
 
 class OrtResultTest : WordSpec({
     "collectDependencies" should {

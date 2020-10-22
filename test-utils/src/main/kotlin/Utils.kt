@@ -53,6 +53,8 @@ fun patchExpectedResult(
     return custom.entries.fold(result.readText()) { text, entry -> text.replaceIfNotNull(entry.key, entry.value) }
         .replaceIfNotNull("<REPLACE_JAVA>", System.getProperty("java.version"))
         .replaceIfNotNull("<REPLACE_OS>", System.getProperty("os.name"))
+        .replaceIfNotNull("\"<REPLACE_PROCESSORS>\"", Runtime.getRuntime().availableProcessors().toString())
+        .replaceIfNotNull("\"<REPLACE_MAX_MEMORY>\"", Runtime.getRuntime().maxMemory().toString())
         .replaceIfNotNull("<REPLACE_DEFINITION_FILE_PATH>", definitionFilePath)
         .replaceIfNotNull("<REPLACE_URL>", url)
         .replaceIfNotNull("<REPLACE_REVISION>", revision)
